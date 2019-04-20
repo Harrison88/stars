@@ -45,18 +45,18 @@ class Sky:
         self.star_color = star_color
 
     @staticmethod
-    def planck(microns: float, temperature: float) -> float:
-        """Calculate how much of a particular wavelength of light (in microns) a black body will emit at the given temperature.
+    def planck(wavelength: float, temperature: float) -> float:
+        """Calculate how much of a particular wavelength of light (in micrometers) a black body will emit at the given temperature.
         
         Arguments:
-        microns -- the wavelength of light in microns (e.g., 0.7 for red)
+        wavelength -- the wavelength of light in micrometers (e.g., 0.7 for red)
         temperature -- the temperature of the black body in degrees Kelvin
         """
         
         c1 = 3.7403e10
         c2 = 14384
-        return (c1 * pow(microns, -5)) / (
-            pow(math.e, c2 / (microns * temperature)) - 1
+        return (c1 * pow(wavelength, -5)) / (
+            pow(math.e, c2 / (wavelength * temperature)) - 1
         )
 
     @staticmethod
@@ -112,7 +112,7 @@ class Sky:
         return (0, 0, 0)
 
     def generate_sky(self) -> None:
-        """Generate an image based on the parameters of the class."""
+        """Generate an image based on the parameters of the class, stored in self.image."""
         for x in range(self.dimensions[0]):
             for y in range(self.dimensions[1]):
                 self.image.putpixel((x, y), self.generate_sky_pixel())
