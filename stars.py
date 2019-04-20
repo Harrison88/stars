@@ -18,13 +18,23 @@ import random
 from typing import Tuple
 
 class Sky:
-    def __init__(self, dimensions: Tuple[int, int] = (1600, 900),
+    def __init__(self, dimensions: Tuple[int, int] = (900, 900),
                  star_fraction: float = 0.5,
                  star_quality: float = 0.5,
                  star_intensity: float = 8,
                  star_tint_exp: float = 0.5,
                  star_color: int = 125,
                  ):
+        """Initialize parameters to control what starry sky will be generated.
+        
+        Keyword arguments:
+        dimensions -- the width and height of the image (default (1600, 900))
+        star_fraction -- the percentage of stars in the image (default 0.5)
+        star_quality -- affects the percentage of bright vs. dim stars (default 0.5)
+        star_intensity -- affects the minimum brightness (default 8)
+        star_tint_exp -- affects the number of stars with a higher temperature, thus causing more colorful stars (default 0.5)
+        star_color -- affects the minimum temperature (default 125)
+        """
         self.dimensions = dimensions
         self.image = Image.new("RGB", dimensions)
         
@@ -36,6 +46,13 @@ class Sky:
 
     @staticmethod
     def planck(microns: float, temperature: float) -> float:
+        """Calculate how much of a particular wavelength of light (in microns) a black body will emit at the given temperature.
+        
+        Arguments:
+        microns -- the wavelength of light in microns (e.g., 0.7 for red)
+        temperature -- the temperature of the black body in degrees Kelvin
+        """
+        
         c1 = 3.7403e10
         c2 = 14384
         return (c1 * pow(microns, -5)) / (
@@ -44,10 +61,16 @@ class Sky:
 
     @staticmethod
     def cast(low: float, high: float) -> float:
+        """To be honest, I copied this bit of math from ppmforge and have no earthly idea how it works. Someday I will."""
         arand = pow(2.0, 15.0) - 1.0
         return low + ((high - low) * (random.randint(0, 32767) / arand))
 
     def generate_star_pixel(self, temperature: float) -> Tuple[float, float, float]:
+        """Calculate the r, g, b values for a particular temperature of a star
+        
+        Arguments:
+        temperature -- the temperature of the star in degrees Kelvin
+        """
         er = self.planck(0.7, temperature)
         eg = self.planck(0.5461, temperature)
         eb = self.planck(0.4358, temperature)
@@ -61,6 +84,7 @@ class Sky:
         return (r, g, b)
 
     def generate_sky_pixel(self) -> Tuple[int, int, int]:
+        """Calculate whether a pixel will contain a star, and if so, what temperature it will be."""
         if random.random() < self.star_fraction:
             v = self.star_intensity * pow(
                 1 / (1 - self.cast(0, 0.9999)), self.star_quality
@@ -88,6 +112,7 @@ class Sky:
         return (0, 0, 0)
 
     def generate_sky(self) -> None:
+        """Generate an image based on the parameters of the class."""
         for x in range(self.dimensions[0]):
             for y in range(self.dimensions[1]):
                 self.image.putpixel((x, y), self.generate_sky_pixel())
