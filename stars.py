@@ -24,6 +24,7 @@ class Sky:
                  star_intensity: float = 8,
                  star_tint_exp: float = 0.5,
                  star_color: int = 125,
+                 template_image: Image = None,
                  ):
         """Initialize parameters to control what starry sky will be generated.
         
@@ -34,6 +35,7 @@ class Sky:
         star_intensity -- affects the minimum brightness (default 8)
         star_tint_exp -- affects the number of stars with a higher temperature, thus causing more colorful stars (default 0.5)
         star_color -- affects the minimum temperature (default 125)
+        template_image -- a PIL Image; brighter areas of the image have higher density of stars (default None)
         """
         self.dimensions = dimensions
         self.image = Image.new("RGB", dimensions)
@@ -43,6 +45,12 @@ class Sky:
         self.star_intensity = star_intensity
         self.star_tint_exp = star_tint_exp
         self.star_color = star_color
+        
+        if template_image is not None and template_image.size != dimensions:
+            raise ValueError('Size of template_image must match dimensions '
+                             f'for Sky image ({template_image.size} != {dimensions})')
+        
+        self.template_image = template_image
 
     @staticmethod
     def planck(wavelength: float, temperature: float) -> float:
@@ -115,10 +123,16 @@ class Sky:
         """Generate an image based on the parameters of the class, stored in self.image."""
         for x in range(self.dimensions[0]):
             for y in range(self.dimensions[1]):
+                
+                if self.template_image is not None:
+                    brightness = sum(self.template_image.getpixel((x, y))[0:3]) / 3  # Get the average of the RGB values, ignoring any possible fourth band
+                    self.star_fraction = max(0.2, min(0.8, brightness / 256))  # Turn brightness into a percentage between 0.2 and 0.8
+                    
                 self.image.putpixel((x, y), self.generate_sky_pixel())
 
 
 if __name__ == "__main__":
-    sky = Sky()
+    template = Image.open('/home/harrison/Downloads/IMG_20181226_141657.jpg')
+    sky = Sky(dimensions=template.size, template_image=template)
     sky.generate_sky()
     sky.image.save("/home/harrison/Programming/stars/output.png")
