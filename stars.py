@@ -132,7 +132,8 @@ class Sky:
 
 
 if __name__ == "__main__":
-    template = Image.open('/home/harrison/Downloads/IMG_20181226_141657.jpg')
-    sky = Sky(dimensions=template.size, template_image=template)
+    import templates
+    template = templates.create_words_template('Hello, world!')
+    sky = Sky(dimensions=template.size, template_image=template, star_intensity=16)
     sky.generate_sky()
     sky.image.save("/home/harrison/Programming/stars/output.png")
