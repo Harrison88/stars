@@ -1,4 +1,6 @@
 *.png
+*.sqlite3
 **/__pycache__
 **/.mypy_cache
 **/.spyproject
+**/.idea
