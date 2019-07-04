@@ -132,7 +132,8 @@ class Sky:
 
 
 if __name__ == "__main__":
-    import templates
+    from generator import templates
+
     template = templates.create_words_template('Hello, world!')
     sky = Sky(dimensions=template.size, template_image=template, star_intensity=16)
     sky.generate_sky()
