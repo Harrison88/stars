@@ -17,15 +17,18 @@ import random
 
 from typing import Tuple
 
+
 class Sky:
-    def __init__(self, dimensions: Tuple[int, int] = (900, 900),
-                 star_fraction: float = 0.5,
-                 star_quality: float = 0.5,
-                 star_intensity: float = 8,
-                 star_tint_exp: float = 0.5,
-                 star_color: int = 125,
-                 template_image: Image = None,
-                 ):
+    def __init__(
+        self,
+        dimensions: Tuple[int, int] = (900, 900),
+        star_fraction: float = 0.5,
+        star_quality: float = 0.5,
+        star_intensity: float = 8,
+        star_tint_exp: float = 0.5,
+        star_color: int = 125,
+        template_image: Image = None,
+    ):
         """Initialize parameters to control what starry sky will be generated.
         
         Keyword arguments:
@@ -39,17 +42,19 @@ class Sky:
         """
         self.dimensions = dimensions
         self.image = Image.new("RGB", dimensions)
-        
+
         self.star_fraction = star_fraction
         self.star_quality = star_quality
         self.star_intensity = star_intensity
         self.star_tint_exp = star_tint_exp
         self.star_color = star_color
-        
+
         if template_image is not None and template_image.size != dimensions:
-            raise ValueError('Size of template_image must match dimensions '
-                             f'for Sky image ({template_image.size} != {dimensions})')
-        
+            raise ValueError(
+                "Size of template_image must match dimensions "
+                f"for Sky image ({template_image.size} != {dimensions})"
+            )
+
         self.template_image = template_image
 
     @staticmethod
@@ -60,7 +65,7 @@ class Sky:
         wavelength -- the wavelength of light in micrometers (e.g., 0.7 for red)
         temperature -- the temperature of the black body in degrees Kelvin
         """
-        
+
         c1 = 3.7403e10
         c2 = 14384
         return (c1 * pow(wavelength, -5)) / (
@@ -104,7 +109,7 @@ class Sky:
             temperature = 5500 + self.star_color * pow(
                 1 / (1 - self.cast(0, 0.9999)), self.star_tint_exp
             ) * (-1 if random.randint(0, 7) else 1)
-            
+
             # Constrain temperature to a reasonable value: >= 2600K
             # (S Cephei/R Andromedae), <= 28,000 (Spica).
             temperature = max(2600, min(28000, temperature))
@@ -123,18 +128,22 @@ class Sky:
         """Generate an image based on the parameters of the class, stored in self.image."""
         for x in range(self.dimensions[0]):
             for y in range(self.dimensions[1]):
-                
+
                 if self.template_image is not None:
-                    brightness = sum(self.template_image.getpixel((x, y))[0:3]) / 3  # Get the average of the RGB values, ignoring any possible fourth band
-                    self.star_fraction = max(0.2, min(0.8, brightness / 256))  # Turn brightness into a percentage between 0.2 and 0.8
-                    
+                    brightness = (
+                        sum(self.template_image.getpixel((x, y))[0:3]) / 3
+                    )  # Get the average of the RGB values, ignoring any possible fourth band
+                    self.star_fraction = max(
+                        0.2, min(0.8, brightness / 256)
+                    )  # Turn brightness into a percentage between 0.2 and 0.8
+
                 self.image.putpixel((x, y), self.generate_sky_pixel())
 
 
 if __name__ == "__main__":
     from generator import templates
 
-    template = templates.create_words_template('Hello, world!')
+    template = templates.create_words_template("Hello, world!")
     sky = Sky(dimensions=template.size, template_image=template, star_intensity=16)
     sky.generate_sky()
     sky.image.save("/home/harrison/Programming/stars/output.png")
