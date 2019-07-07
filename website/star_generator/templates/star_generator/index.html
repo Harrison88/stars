@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stars Generator</title>
+</head>
+<body>
+<form action="{% url 'star_generator:generate_stars' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <p>Size:</p>
+        <label for="pixels-x">X:</label>
+        <input type="number" id="pixels-x" name="pixels-x" min="1" max="4096">
+    </div>
+    <div>
+        <label for="pixels-y">Y:</label>
+        <input type="number" id="pixels-y" name="pixels-y" min="1" max="4096">
+    </div>
+    <div class="button">
+        <button type="submit">Generate a starry sky</button>
+    </div>
+</form>
+</body>
+</html>
