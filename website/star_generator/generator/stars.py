@@ -85,7 +85,7 @@ class Sky:
     def cast(low: float, high: float) -> float:
         """To be honest, I copied this bit of math from ppmforge and have no earthly idea how it works. Someday I will."""
         arand = pow(2.0, 15.0) - 1.0
-        return low + ((high - low) * (random.randint(0, 32767) / arand))
+        return low + ((high - low) * (int(32767 * random.random()) / arand))
 
     def generate_star_pixel(self, temperature: float) -> Tuple[float, float, float]:
         """Calculate the r, g, b values for a particular temperature of a star
