@@ -107,7 +107,7 @@ class Sky:
 
             temperature = 5500 + self.star_color * pow(
                 1 / (1 - self.cast(0, 0.9999)), self.star_tint_exp
-            ) * (-1 if random.randint(0, 7) else 1)
+            ) * (-1 if int(7 * random.random()) else 1)
 
             # Constrain temperature to a reasonable value: >= 2600K
             # (S Cephei/R Andromedae), <= 28,000 (Spica).
