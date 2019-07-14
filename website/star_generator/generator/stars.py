@@ -14,9 +14,18 @@ https://sourceforge.net/p/netpbm/code/HEAD/tree/advanced/generator/ppmforge.c
 from PIL import Image
 import math
 import random
+from collections import Counter
 
 from typing import Tuple
+import logging
 
+Image.DEBUG = True
+logger = logging.getLogger('PIL')
+logger.setLevel(level=logging.DEBUG)
+fh = logging.StreamHandler()
+fh_formatter = logging.Formatter('%(asctime)s %(levelname)s %(lineno)d:%(filename)s(%(process)d) - %(message)s')
+fh.setFormatter(fh_formatter)
+logger.addHandler(fh)
 
 class Sky:
     def __init__(
@@ -126,24 +135,31 @@ class Sky:
 
     def generate_sky(self) -> None:
         """Generate an image based on the parameters of the class, stored in self.image."""
-        for x in range(self.dimensions[0]):
-            for y in range(self.dimensions[1]):
+
+        pixels = bytearray()
+
+        for x in range(self.dimensions[1]):
+            for y in range(self.dimensions[0]):
 
                 if self.template_image is not None:
                     brightness = (
-                        sum(self.template_image.getpixel((x, y))[0:3]) / 3
+                        sum(self.template_image.getpixel((y, x))[0:3]) / 3
                     )  # Get the average of the RGB values, ignoring any possible fourth band
+
                     self.star_fraction = max(
                         0.2, min(0.8, brightness / 256)
                     )  # Turn brightness into a percentage between 0.2 and 0.8
 
-                self.image.putpixel((x, y), self.generate_sky_pixel())
+                pixels.extend(self.generate_sky_pixel())
+
+        self.image = Image.frombytes('RGB', self.dimensions, bytes(pixels))
 
 
 if __name__ == "__main__":
-    from generator import templates
+    import templates
 
     template = templates.create_words_template("Hello, world!")
     sky = Sky(dimensions=template.size, template_image=template, star_intensity=16)
     sky.generate_sky()
     sky.image.save("/home/harrison/Programming/stars/output.png")
+    sky.image2.save("/home/harrison/Programming/stars/output2.png")
