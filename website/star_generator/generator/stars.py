@@ -14,6 +14,7 @@ https://sourceforge.net/p/netpbm/code/HEAD/tree/advanced/generator/ppmforge.c
 from PIL import Image
 import math
 import random
+import numpy as np
 
 from typing import Tuple
 
@@ -126,6 +127,11 @@ class Sky:
 
     def generate_sky(self) -> None:
         """Generate an image based on the parameters of the class, stored in self.image."""
+
+        # For some reason, Image.fromarray swaps the x and y axis, so we have to start with a reversed array
+        dimensions = self.dimensions[1], self.dimensions[0], 3
+        pixels = np.zeros(dimensions, dtype=np.ubyte)
+
         for x in range(self.dimensions[0]):
             for y in range(self.dimensions[1]):
 
@@ -137,13 +143,16 @@ class Sky:
                         0.2, min(0.8, brightness / 256)
                     )  # Turn brightness into a percentage between 0.2 and 0.8
 
-                self.image.putpixel((x, y), self.generate_sky_pixel())
+                pixels[y, x] = self.generate_sky_pixel()
+
+        self.image = Image.fromarray(pixels, 'RGB')
 
 
 if __name__ == "__main__":
-    from generator import templates
+    import templates
 
     template = templates.create_words_template("Hello, world!")
     sky = Sky(dimensions=template.size, template_image=template, star_intensity=16)
     sky.generate_sky()
+    sky.template_image.save('/home/harrison/Programming/stars/template.png')
     sky.image.save("/home/harrison/Programming/stars/output.png")
