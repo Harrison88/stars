@@ -14,18 +14,8 @@ https://sourceforge.net/p/netpbm/code/HEAD/tree/advanced/generator/ppmforge.c
 from PIL import Image
 import math
 import random
-from collections import Counter
 
 from typing import Tuple
-import logging
-
-Image.DEBUG = True
-logger = logging.getLogger('PIL')
-logger.setLevel(level=logging.DEBUG)
-fh = logging.StreamHandler()
-fh_formatter = logging.Formatter('%(asctime)s %(levelname)s %(lineno)d:%(filename)s(%(process)d) - %(message)s')
-fh.setFormatter(fh_formatter)
-logger.addHandler(fh)
 
 class Sky:
     def __init__(
@@ -162,4 +152,3 @@ if __name__ == "__main__":
     sky = Sky(dimensions=template.size, template_image=template, star_intensity=16)
     sky.generate_sky()
     sky.image.save("/home/harrison/Programming/stars/output.png")
-    sky.image2.save("/home/harrison/Programming/stars/output2.png")
