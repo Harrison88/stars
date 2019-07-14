@@ -71,11 +71,6 @@ class Sky:
             pow(math.e, c2 / (wavelength * temperature)) - 1
         )
 
-    @staticmethod
-    def cast(low: float, high: float) -> float:
-        """To be honest, I copied this bit of math from ppmforge and have no earthly idea how it works. Someday I will."""
-        return low + ((high - low) * random.random())
-
     def generate_star_pixel(self, temperature: float) -> Tuple[float, float, float]:
         """Calculate the r, g, b values for a particular temperature of a star
         
@@ -98,14 +93,14 @@ class Sky:
         """Calculate whether a pixel will contain a star, and if so, what temperature it will be."""
         if random.random() < self.star_fraction:
             v = self.star_intensity * pow(
-                1 / (1 - self.cast(0, 0.9999)), self.star_quality
+                1 / (1 - random.random()), self.star_quality
             )
 
             if v > 255:
                 v = 255
 
             temperature = 5500 + self.star_color * pow(
-                1 / (1 - self.cast(0, 0.9999)), self.star_tint_exp
+                1 / (1 - random.random()), self.star_tint_exp
             ) * (-1 if int(7 * random.random()) else 1)
 
             # Constrain temperature to a reasonable value: >= 2600K
