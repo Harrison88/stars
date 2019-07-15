@@ -10,11 +10,31 @@
     <div>
         <p>Size:</p>
         <label for="pixels-x">X:</label>
-        <input type="number" id="pixels-x" name="pixels-x" min="1" max="4096">
+        <input type="number" id="pixels-x" name="pixels-x" min="1" max="4096" value="600" required>
     </div>
     <div>
         <label for="pixels-y">Y:</label>
-        <input type="number" id="pixels-y" name="pixels-y" min="1" max="4096">
+        <input type="number" id="pixels-y" name="pixels-y" min="1" max="4096" value="500" required>
+    </div>
+    <div>
+        <label for="star-fraction">Star Fraction:</label>
+        <input type="number" id="star-fraction" name="star-fraction" value=".5" step=".1" required>
+    </div>
+    <div>
+        <label for="star-quality">Star Quality:</label>
+        <input type="number" id="star-quality" name="star-quality" value=".5" step=".1" required>
+    </div>
+    <div>
+        <label for="star-intensity">Star Intensity:</label>
+        <input type="number" id="star-intensity" name="star-intensity" value="8" step=".1" required>
+    </div>
+    <div>
+        <label for="star-tint-exp">Star Tint Exponent:</label>
+        <input type="number" id="star-tint-exp" name="star-tint-exp" value=".5" step=".1" required>
+    </div>
+    <div>
+        <label for="star-color">Star Color:</label>
+        <input type="number" id="star-color" name="star-color" value="125" required>
     </div>
     <div class="button">
         <button type="submit">Generate a starry sky</button>
