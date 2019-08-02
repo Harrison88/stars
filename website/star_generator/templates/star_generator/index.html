@@ -1,44 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.js"></script>
     <meta charset="UTF-8">
     <title>Stars Generator</title>
 </head>
 <body>
-<form action="{% url 'star_generator:generate_stars' %}" method="post">
-    {% csrf_token %}
-    <div>
-        <p>Size:</p>
-        <label for="pixels-x">X:</label>
-        <input type="number" id="pixels-x" name="pixels-x" min="1" max="4096" value="600" required>
-    </div>
-    <div>
-        <label for="pixels-y">Y:</label>
-        <input type="number" id="pixels-y" name="pixels-y" min="1" max="4096" value="500" required>
-    </div>
-    <div>
-        <label for="star-fraction">Star Fraction:</label>
-        <input type="number" id="star-fraction" name="star-fraction" value=".5" step=".1" required>
-    </div>
-    <div>
-        <label for="star-quality">Star Quality:</label>
-        <input type="number" id="star-quality" name="star-quality" value=".5" step=".1" required>
-    </div>
-    <div>
-        <label for="star-intensity">Star Intensity:</label>
-        <input type="number" id="star-intensity" name="star-intensity" value="8" step=".1" required>
-    </div>
-    <div>
-        <label for="star-tint-exp">Star Tint Exponent:</label>
-        <input type="number" id="star-tint-exp" name="star-tint-exp" value=".5" step=".1" required>
-    </div>
-    <div>
-        <label for="star-color">Star Color:</label>
-        <input type="number" id="star-color" name="star-color" value="125" required>
-    </div>
-    <div class="button">
-        <button type="submit">Generate a starry sky</button>
-    </div>
-</form>
+
+<div id="app">
+    <form @submit.prevent="handleSubmit" class="form_grid">
+        <ui-textbox
+            label="Image Width"
+            type="number"
+            required
+
+            help="The width of the desired image, in pixels"
+            :min="1"
+            :max="4096"
+
+            v-model.number="sky.pixels_x">
+        </ui-textbox>
+        <ui-textbox
+            label="Image Height"
+            type="number"
+            required
+
+            help="The height of the desired image, in pixels"
+            :min="1"
+            :max="4096"
+
+            v-model.number="sky.pixels_y">
+        </ui-textbox>
+        <ui-textbox
+            help="The percentage of pixels that will be stars rather than empty space, from 0 to 1.0"
+            label="Star Fraction"
+            type="number"
+            required
+
+            step=0.01
+            :min=0
+            :max=1.0
+
+            v-model.number="sky.star_fraction">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Quality"
+            type="number"
+            required
+
+            help="Star Quality"
+            :min="0.1"
+            step=".1"
+
+            v-model.number="sky.star_quality">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Intensity"
+            type="number"
+            required
+
+            help="Star Intensity"
+            :min=".1"
+            step=".1"
+
+            v-model.number="sky.star_intensity">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Tint Exponent"
+            type="number"
+            required
+
+            help="Star Tint Exponent"
+            :min=".1"
+            step=".1"
+
+            v-model.number="sky.star_tint_exp">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Color"
+            type="number"
+            required
+
+            help="Star Color"
+            :min="1"
+
+            v-model.number="sky.star_color">
+        </ui-textbox>
+        <ui-button class="grid_item">Generate a starry sky</ui-button>
+    </form>
+    <img id="sky_image" v-bind:src="image_data">
+</div>
+<script>
+    var app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            sky: {
+                pixels_x: 500,
+                pixels_y: 400,
+                star_fraction: 0.02,
+                star_quality: 0.6,
+                star_intensity: 20,
+                star_tint_exp: 0.9,
+                star_color: 500,
+            },
+            image_data: "",
+            image: "",
+        },
+        methods: {
+            handleSubmit() {
+                return fetch('{% url 'star_generator:generate_stars' %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(this.sky),
+                })
+                .then(function(response) {
+                    response.arrayBuffer().then(function(buffer) {
+                        var base64Flag = 'data:image/png;base64,';
+                        var imageStr = arrayBufferToBase64(buffer)
+                        this.app.image_data = base64Flag + imageStr
+                        var image = document.getElementById("sky_image")
+                        //Give it time to render before scrolling the image into view
+                        setTimeout(image.scrollIntoView.bind(image), 60)
+                    })
+                })
+            }
+        }
+    });
+
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+
+        return window.btoa(binary);
+    }
+</script>
+<style>
+    background-color: #343434;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23070607' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+    .form_grid {
+        display: grid;
+        grid-template-columns: 1fr
+        grid-template-rows: repeat(9, 1fr);
+        grid-gap: .5rem;
+        margin-left: 20vw;
+        margin-right: 20vw;
+    }
+    #sky_image {
+        margin-left: 20vw;
+    }
+    @media (min-width: 900px) {
+        .form_grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
 </body>
 </html>
