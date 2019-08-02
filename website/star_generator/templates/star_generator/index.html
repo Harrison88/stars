@@ -88,7 +88,7 @@
 
             v-model.number="sky.star_color">
         </ui-textbox>
-        <ui-button class="grid_item">Generate a starry sky</ui-button>
+        <ui-button raised class="grid_item">Generate a starry sky</ui-button>
     </form>
     <img id="sky_image" v-bind:src="image_data">
 </div>
@@ -142,15 +142,20 @@
     }
 </script>
 <style>
-    background-color: #343434;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23070607' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+    body {
+        background-color: #343434;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23070607' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+    }
     .form_grid {
+        background-color: #eee;
         display: grid;
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
         grid-template-rows: repeat(9, 1fr);
         grid-gap: .5rem;
-        margin-left: 20vw;
-        margin-right: 20vw;
+        padding-left: 5vw;
+        padding-right: 5vw;
+        margin-left: 15vw;
+        margin-right: 15vw;
     }
     #sky_image {
         margin-left: 20vw;
@@ -158,6 +163,7 @@
     @media (min-width: 900px) {
         .form_grid {
             grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(4, 1fr);
         }
     }
 </style>
