@@ -1,0 +1,8 @@
+runtime: python37
+
+entrypoint: gunicorn -b :$PORT starsite.wsgi:application --timeout 60
+
+handlers:
+- url: /.*
+  secure: always
+  script: auto

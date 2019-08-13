@@ -25,7 +25,7 @@ SECRET_KEY = "1&h96tu3h0v-ze=v*zrd1mu&bvkno-yll%si2!3(!apgb76hhb"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["starsite-hm.appspot.com", "harrisonmorgan.dev", "www.harrisonmorgan.dev"]
 
 
 # Application definition
