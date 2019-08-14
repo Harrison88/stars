@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.css">
     <script src="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.js"></script>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Stars Generator</title>
 </head>
 <body>
@@ -50,7 +51,7 @@
             type="number"
             required
 
-            help="Star Quality"
+            help="Affects the percentage of bright vs. dim stars"
             :min="0.1"
             step=".1"
 
@@ -61,7 +62,7 @@
             type="number"
             required
 
-            help="Star Intensity"
+            help="Affects the minimum brightness"
             :min=".1"
             step=".1"
 
@@ -72,7 +73,7 @@
             type="number"
             required
 
-            help="Star Tint Exponent"
+            help="Affects average star temperature, which relates to the color and brightness of stars"
             :min=".1"
             step=".1"
 
@@ -83,7 +84,7 @@
             type="number"
             required
 
-            help="Star Color"
+            help="Affects star temperature"
             :min="1"
 
             v-model.number="sky.star_color">
