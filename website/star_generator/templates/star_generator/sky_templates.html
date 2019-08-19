@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Templated Stars Generator</title>
+</head>
+<body>
+
+<div id="app">
+    <form @submit.prevent="handleSubmit" class="form_grid">
+        <ui-textbox
+            help="The percentage of pixels that will be stars rather than empty space, from 0 to 1.0"
+            label="Star Fraction"
+            type="number"
+            required
+
+            step=0.01
+            :min=0
+            :max=1.0
+
+            v-model.number="sky.star_fraction">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Quality"
+            type="number"
+            required
+
+            help="Affects the percentage of bright vs. dim stars"
+            :min="0.1"
+            step=".1"
+
+            v-model.number="sky.star_quality">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Intensity"
+            type="number"
+            required
+
+            help="Affects the minimum brightness"
+            :min=".1"
+            step=".1"
+
+            v-model.number="sky.star_intensity">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Tint Exponent"
+            type="number"
+            required
+
+            help="Affects average star temperature, which relates to the color and brightness of stars"
+            :min=".1"
+            step=".1"
+
+            v-model.number="sky.star_tint_exp">
+        </ui-textbox>
+        <ui-textbox
+            label="Star Color"
+            type="number"
+            required
+
+            help="Affects star temperature"
+            :min="1"
+
+            v-model.number="sky.star_color">
+        </ui-textbox>
+        <ui-textbox
+            label="Font Size"
+            type="number"
+            required
+
+            help="Size of the font of the template, affects image height and width"
+            :min="18"
+
+            v-model.number="sky.font_size">
+        </ui-textbox>
+        <ui-textbox
+            label="Template Text"
+            required
+
+            help="The message to be written in the stars"
+
+            v-model.number="sky.template_text">
+        </ui-textbox>
+        <ui-button raised class="grid_item">Generate a starry sky</ui-button>
+    </form>
+    <img id="sky_image" v-bind:src="image_data">
+</div>
+<script>
+    var app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            sky: {
+                star_fraction: 0.02,
+                star_quality: 0.6,
+                star_intensity: 20,
+                star_tint_exp: 0.9,
+                star_color: 500,
+                font_size: 64,
+                template_text: "",
+            },
+            image_data: "",
+            image: "",
+        },
+        methods: {
+            handleSubmit() {
+                return fetch('{% url 'star_generator:generate_stars' %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(this.sky),
+                })
+                .then(function(response) {
+                    response.arrayBuffer().then(function(buffer) {
+                        var base64Flag = 'data:image/png;base64,';
+                        var imageStr = arrayBufferToBase64(buffer)
+                        this.app.image_data = base64Flag + imageStr
+                        var image = document.getElementById("sky_image")
+                        //Give it time to render before scrolling the image into view
+                        setTimeout(image.scrollIntoView.bind(image), 60)
+                    })
+                })
+            }
+        }
+    });
+
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+
+        return window.btoa(binary);
+    }
+</script>
+<style>
+    body {
+        background-color: #343434;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23070607' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+    }
+    .form_grid {
+        background-color: #eee;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(9, 1fr);
+        grid-gap: .5rem;
+        padding-left: 5vw;
+        padding-right: 5vw;
+        margin-left: 15vw;
+        margin-right: 15vw;
+    }
+    #sky_image {
+        margin-left: 20vw;
+    }
+    @media (min-width: 900px) {
+        .form_grid {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(4, 1fr);
+        }
+    }
+</style>
+</body>
+</html>

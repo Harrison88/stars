@@ -9,6 +9,9 @@ import json
 def index(request):
     return render(request, "star_generator/index.html")
 
+def templates(request):
+    return render(request, "star_generator/sky_templates.html")
+
 @csrf_exempt
 def generate_stars(request):
     values = json.loads(request.body)
