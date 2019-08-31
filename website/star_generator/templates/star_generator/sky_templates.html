@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.css">
     <script src="https://cdn.jsdelivr.net/npm/keen-ui@1.2.0/dist/keen-ui.min.js"></script>
     <meta charset="UTF-8">
@@ -79,7 +79,7 @@
         </ui-textbox>
         <ui-textbox
             label="Template Text"
-            required
+            multi-Line
 
             help="The message to be written in the stars"
 
@@ -108,7 +108,7 @@
         },
         methods: {
             handleSubmit() {
-                return fetch('{% url 'star_generator:generate_stars' %}', {
+                return fetch('{% url 'star_generator:generate_stars_template' %}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
