@@ -42,12 +42,18 @@ def create_words_template(
     x_padding -- the number of pixels to the left and right of the words
     y_padding -- the number of pixels above and below the words
     """
+    
     pil_font = ImageFont.truetype(find_font(font), font_size)
-    x, y = pil_font.getsize(message)
+    
+    # To get the height of text, an instance of ImageDraw.Draw is needed.
+    empty_image = Image.new("RGB", (0, 0))
+    empty_draw = ImageDraw.Draw(empty_image)
+    x, y = empty_draw.textsize(message, font=pil_font)
     dimensions = (x + (x_padding * 2), y + (y_padding * 2))
-    template = Image.new("RGB", dimensions)
 
+    template = Image.new("RGB", dimensions)
     draw = ImageDraw.Draw(template)
+
     draw.text((x_padding, y_padding), message, (255, 255, 255), pil_font)
 
     return template
