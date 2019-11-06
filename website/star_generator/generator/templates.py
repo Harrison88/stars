@@ -7,21 +7,15 @@ Created on Sun Apr 21 20:42:49 2019
 """
 
 from PIL import Image, ImageDraw, ImageFont
-from matplotlib.font_manager import findSystemFonts
-
-from typing import Union
+import matplotlib.font_manager
 
 
-def find_font(query: str) -> Union[str, None]:
+
+def find_font() -> str:
     """Return the absolute path to a system font file.
-    
-    Arguments:
-    query -- the font file name (e.g., 'DejaVuSerif.ttf')
     """
-    fonts = findSystemFonts()
-    for font_path in fonts:
-        if font_path.endswith(query):
-            return font_path
+    properties = matplotlib.font_manager.FontProperties()
+    return matplotlib.font_manager.findfont(properties)
 
 
 def create_words_template(
@@ -43,7 +37,7 @@ def create_words_template(
     y_padding -- the number of pixels above and below the words
     """
     
-    pil_font = ImageFont.truetype(find_font(font), font_size)
+    pil_font = ImageFont.truetype(find_font(), font_size)
     
     # To get the height of text, an instance of ImageDraw.Draw is needed.
     empty_image = Image.new("RGB", (0, 0))
